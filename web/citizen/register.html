@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Register - CivicPulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3D52A2',
+                            red: '#9E0A0F',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/globals.css">
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full border border-gray-100">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Create Account</h1>
+            <p class="text-sm text-gray-500 mt-2">Join CivicPulse to report issues in your ward.</p>
+        </div>
+        
+        <form id="registerForm" class="space-y-5">
+            <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <input type="text" id="fullName" required 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm">
+            </div>
+            
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <input type="email" id="email" required 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                    <input type="tel" id="phone" required 
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm">
+                </div>
+                <div>
+                    <label for="ward" class="block text-sm font-medium text-gray-700">Ward Number</label>
+                    <input type="number" id="ward" min="1" max="32" required 
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" required 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm">
+            </div>
+            
+            <button type="submit" 
+                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-brand-blue hover:bg-blue-800 transition-colors">
+                Sign Up
+            </button>
+        </form>
+        
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Already have an account? 
+                <a href="login.html" class="font-medium text-brand-blue hover:underline">Log in</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+/* Custom globals and Tailwind layer overrides if needed */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-blue: #3D52A2;
+    --brand-red: #9E0A0F;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+body {
+  background-color: #F9FAFB; /* neutral-50 */
+  font-family: 'Inter', sans-serif;
+}

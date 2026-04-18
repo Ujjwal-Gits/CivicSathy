@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CivicPulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3D52A2',
+                            red: '#9E0A0F',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/globals.css">
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-gray-900">Civic<span class="text-brand-blue">Pulse</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    </button>
+                    <div class="h-8 w-8 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold text-sm">
+                        RS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- Left Sidebar (Desktop) -->
+        <div class="hidden md:block w-64 flex-shrink-0">
+            <nav class="sticky top-24 space-y-1">
+                <a href="#" class="bg-blue-50 text-brand-blue group flex items-center px-4 py-3 text-sm font-medium rounded-xl">
+                    <svg class="mr-3 flex-shrink-0 h-5 w-5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Public Feed
+                </a>
+                <a href="my-complaints.html" class="text-gray-700 hover:bg-gray-50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors">
+                    <svg class="mr-3 flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    My Complaints
+                </a>
+                <a href="profile.html" class="text-gray-700 hover:bg-gray-50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors">
+                    <svg class="mr-3 flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Profile
+                </a>
+            </nav>
+        </div>
+
+        <!-- Center Feed -->
+        <main class="flex-1 max-w-2xl w-full mx-auto md:mx-0">
+            <!-- Filter Pills -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2">
+                <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-brand-blue text-white border border-brand-blue whitespace-nowrap">All</button>
+                <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 whitespace-nowrap transition-colors">Road Damage</button>
+                <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 whitespace-nowrap transition-colors">Garbage</button>
+                <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 whitespace-nowrap transition-colors">Water</button>
+                <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 whitespace-nowrap transition-colors">Electricity</button>
+            </div>
+
+            <!-- Complaint Cards Feed -->
+            <div class="space-y-5" id="complaintFeed">
+                <!-- Sample Card -->
+                <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">
+                                PENDING
+                            </span>
+                            <span class="text-sm text-gray-500">2 hrs ago</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">Massive Pothole on Main Street</h3>
+                        <p class="text-sm text-gray-600 mb-4 line-clamp-2">A huge pothole has formed right in the middle of the intersection, causing traffic jams and potential vehicle damage.</p>
+                        <div class="w-full h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=800" alt="Pothole" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span class="flex items-center"><svg class="w-4 h-4 mr-1 text-brand-red" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg> Ward 5, Main St</span>
+                                <span><span class="font-semibold text-gray-900">42</span> Affected</span>
+                            </div>
+                            <button class="bg-red-50 text-brand-red hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                                Upvote
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </main>
+
+        <!-- Right Aside (Desktop) -->
+        <aside class="hidden xl:block w-80 flex-shrink-0">
+            <div class="sticky top-24 space-y-6">
+                <!-- Announcement Banner -->
+                <div class="bg-gradient-to-br from-brand-blue to-blue-900 rounded-xl p-6 text-white shadow-lg">
+                    <h3 class="font-bold text-lg mb-2">Ward 5 Notice</h3>
+                    <p class="text-sm text-blue-100 mb-4">Water supply will be interrupted tomorrow from 10 AM to 2 PM due to maintenance.</p>
+                    <button class="text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors w-full">View Details</button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <h3 class="font-bold text-gray-900 mb-4">Your Impact</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-2xl font-bold text-brand-blue">3</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">Submitted</div>
+                        </div>
+                        <div class="text-center p-3 bg-gray-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">2</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 pb-safe z-50">
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-brand-blue">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="text-[10px] font-medium">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-gray-900 transition-colors">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span class="text-[10px] font-medium">Report</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-gray-900 transition-colors">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <span class="text-[10px] font-medium">Profile</span>
+        </a>
+    </div>
+
+    <!-- Floating Action Button (Desktop) -->
+    <button class="hidden md:flex fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-lg hover:bg-blue-800 hover:scale-105 transition-all items-center justify-center z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    </button>
+</body>
+</html>
