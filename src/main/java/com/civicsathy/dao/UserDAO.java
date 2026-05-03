@@ -21,9 +21,7 @@ public class UserDAO {
             stmt.setInt(5, Integer.parseInt(user.getWardNo()));
             stmt.setString(6, "CITIZEN");
             
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-            
+            return stmt.executeUpdate() > 0;
         } catch (SQLException | NumberFormatException e) {
             e.printStackTrace();
             return false;
@@ -44,8 +42,6 @@ public class UserDAO {
                     user.setId(rs.getInt("id"));
                     user.setFullName(rs.getString("full_name"));
                     user.setEmail(rs.getString("email"));
-                    user.setContactNo(rs.getString("phone"));
-                    user.setWardNo(String.valueOf(rs.getInt("ward")));
                     user.setRole(rs.getString("role"));
                     return user;
                 }
