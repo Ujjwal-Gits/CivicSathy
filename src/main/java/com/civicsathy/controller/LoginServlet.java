@@ -47,9 +47,6 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // TEMPORARY BYPASS: Redirect directly to dashboard
-        response.sendRedirect(request.getContextPath() + "/citizen/feed.jsp");
-        /*
         String hashedPassword = PasswordUtil.hashPassword(password);
         User user = userDAO.login(email, hashedPassword);
 
@@ -74,6 +71,5 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("error", "Invalid email or password");
             request.getRequestDispatcher("/citizen/login.jsp").forward(request, response);
         }
-        */
     }
 }
