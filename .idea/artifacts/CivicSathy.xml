@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="CivicSathy">
+    <output-path>$PROJECT_DIR$/out/artifacts/CivicSathy</output-path>
+    <root id="root">
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      <element id="module-output" name="CivicSathy_Java" />
+    </root>
+  </artifact>
+</component>
