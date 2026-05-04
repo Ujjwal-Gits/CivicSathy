@@ -13,7 +13,7 @@ public class DBUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException("MySQL Driver not found! Please add the mysql-connector jar to WEB-INF/lib", e);
         }
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }

@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
+        String email = request.getParameter("email") != null ? request.getParameter("email").trim() : "";
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
 
@@ -47,28 +47,33 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String hashedPassword = PasswordUtil.hashPassword(password);
-        User user = userDAO.login(email, hashedPassword);
+        try {
+            String hashedPassword = PasswordUtil.hashPassword(password);
+            User user = userDAO.login(email, hashedPassword);
 
-        if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("loggedInUser", user);
-            session.setAttribute("userRole", user.getRole());
+            if (user != null) {
+                HttpSession session = request.getSession();
+                session.setAttribute("loggedInUser", user);
+                session.setAttribute("userRole", user.getRole());
 
-            if ("on".equals(rememberMe)) {
-                Cookie emailCookie = new Cookie("savedEmail", email);
-                emailCookie.setMaxAge(7 * 24 * 60 * 60);
-                emailCookie.setPath("/");
-                response.addCookie(emailCookie);
-            }
+                if ("on".equals(rememberMe)) {
+                    Cookie emailCookie = new Cookie("savedEmail", email);
+                    emailCookie.setMaxAge(7 * 24 * 60 * 60);
+                    emailCookie.setPath("/");
+                    response.addCookie(emailCookie);
+                }
 
-            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect(request.getContextPath() + "/admin/dashboard.jsp");
+                if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                    response.sendRedirect(request.getContextPath() + "/admin/dashboard.jsp");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/citizen/feed.jsp");
+                }
             } else {
-                response.sendRedirect(request.getContextPath() + "/citizen/feed.jsp");
+                request.setAttribute("error", "Invalid email or password. Please check your credentials.");
+                request.getRequestDispatcher("/citizen/login.jsp").forward(request, response);
             }
-        } else {
-            request.setAttribute("error", "Invalid email or password");
+        } catch (Exception e) {
+            request.setAttribute("error", "Database Error: " + e.getMessage());
             request.getRequestDispatcher("/citizen/login.jsp").forward(request, response);
         }
     }
