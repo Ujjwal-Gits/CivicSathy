@@ -2,6 +2,7 @@ package com.civicsathy.dao;
 
 import com.civicsathy.model.User;
 import com.civicsathy.util.DBUtil;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

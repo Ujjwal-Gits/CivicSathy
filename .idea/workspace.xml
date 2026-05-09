@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
+      <artifact name="CivicSathy_Java:war" />
       <artifact name="CivicSathy_Java:war exploded" />
     </artifacts-to-build>
   </component>
@@ -10,17 +11,54 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="752cc295-8c34-4f48-a207-45cc42f32cfb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/CivicSathy_Java_war_exploded.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CivicSathy_Java.iml" beforeDir="false" afterPath="$PROJECT_DIR$/CivicSathy_Java.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/config/AppConstants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/config/DatabaseConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/controller/AdminDashboardServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/controller/AdminTicketServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/controller/LoginServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/controller/RegisterServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/controller/SubmitComplaintServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/dao/ComplaintDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/dao/UserDAO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/exception/DatabaseException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/exception/ValidationException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/filter/AdminAuthFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/filter/AuthFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/filter/EncodingFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/model/Category.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/model/Notification.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/model/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/service/GeminiService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/util/DBUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/util/FileUploadUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/util/PasswordUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CivicSathy_Java/com/civicsathy/util/SessionUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/AdminDashboardServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/AdminDashboardServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/AdminTicketServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/AdminTicketServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/LoginServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/LoginServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/util/DBUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/util/DBUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/RegisterServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/RegisterServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/SubmitComplaintServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/controller/SubmitComplaintServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/dao/ComplaintDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/dao/ComplaintDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/filter/AdminAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/filter/AdminAuthFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/civicsathy/filter/AuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/civicsathy/filter/AuthFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/citizen/admin-login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/web/citizen/admin-login.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/citizen/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/web/citizen/login.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="69" />
   </component>
   <component name="Git.Settings">
     <excluded-from-favorite>
@@ -58,12 +96,15 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Maven.CivicSathy_Java [clean].executor": "Run",
+    "Maven.CivicSathy_Java [compile].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Tomcat Server.Tomcat 11.0.18.executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
@@ -75,7 +116,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.19335938",
     "project.structure.side.proportion": "0.37560976",
     "to.speed.mode.migration.done": "true",
@@ -87,6 +128,11 @@
     ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="B:\Advance java\CivicSathy_Java\src\main\java" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="configurationStatuses">
       <map>
@@ -107,6 +153,11 @@
         <artifact name="CivicSathy_Java:war exploded">
           <settings>
             <option name="CONTEXT_PATH" value="/CivicSathy_Java" />
+          </settings>
+        </artifact>
+        <artifact name="CivicSathy_Java:war">
+          <settings>
+            <option name="CONTEXT_PATH" value="/CivicSathy_Java_war" />
           </settings>
         </artifact>
       </deployment>
@@ -187,6 +238,7 @@
         <option name="BuildArtifacts" enabled="true">
           <artifact name="CivicSathy_Java" />
           <artifact name="CivicSathy_Java:war exploded" />
+          <artifact name="CivicSathy_Java:war" />
         </option>
       </method>
     </configuration>
@@ -209,7 +261,9 @@
       <workItem from="1777887130861" duration="35000" />
       <workItem from="1777887559338" duration="310000" />
       <workItem from="1777888082306" duration="604000" />
-      <workItem from="1777888713984" duration="8935000" />
+      <workItem from="1777888713984" duration="11040000" />
+      <workItem from="1778090233728" duration="1450000" />
+      <workItem from="1778231148474" duration="3443000" />
     </task>
     <servers />
   </component>
