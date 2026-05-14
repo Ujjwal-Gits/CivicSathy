@@ -57,3 +57,7 @@ local.properties
 
 # VS Code #
 .vscode/
+
+# Environment variables
+.env
+.env.*
