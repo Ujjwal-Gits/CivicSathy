@@ -38,7 +38,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F5F7;min-height:100vh;displa
     <button type="submit" class="btn">Sign In</button>
   </form>
   <div class="link-row">New here? <a href="${pageContext.request.contextPath}/citizen/register.jsp">Create Account</a></div>
-  <div class="link-row" style="margin-top:8px;">Municipality staff? <a href="${pageContext.request.contextPath}/citizen/admin-login.jsp">Admin Login &rarr;</a></div>
+  <div class="link-row" style="margin-top:8px;">Municipality staff? <a href="${pageContext.request.contextPath}/admin/login.jsp">Admin Login &rarr;</a></div>
 </div>
 </body>
 </html>
