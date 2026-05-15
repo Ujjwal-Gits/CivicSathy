@@ -92,4 +92,34 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-    }}
+        // Hash password before storing
+        String hashedPassword = PasswordUtil.hashPassword(password);
+
+        // Create user object
+        User user = new User();
+        user.setFullName(fullName.trim());
+        user.setEmail(email.trim());
+        user.setContactNo(phone);
+        user.setWardNo(wardNo);
+        user.setPassword(hashedPassword);
+
+        // Save user to database
+        if (userDAO.registerCitizen(user)) {
+
+            // Redirect to login page after successful registration
+            response.sendRedirect(
+                    request.getContextPath() + "/citizen/login.jsp?registered=true"
+            );
+        } else {
+
+            // Handle registration failure
+            request.setAttribute(
+                    "error",
+                    "Registration failed. Email might already exist."
+            );
+            request.getRequestDispatcher("/citizen/register.jsp")
+                    .forward(request, response);
+        }
+    }
+}
+
