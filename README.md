@@ -26,5 +26,3 @@ CivicSathy is a Java-based web application for managing municipality complaints 
 *   **Security:** SHA-256 password hashing, session-based authentication filters, and cookie management.
 *   **Architecture:** Clean DAO pattern implementation with Jakarta EE Servlets.
 
----
-*Developed for the Advance Java - Milestone 1 submission.*
