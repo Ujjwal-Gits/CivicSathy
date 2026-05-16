@@ -63,4 +63,32 @@ public class AddCommentServlet extends HttpServlet {
             return;
         }
 
+        // otherwise, handle adding a comment
+        String complaintIdStr = request.getParameter("complaintId");
+        String commentText = request.getParameter("commentText");
         
+        if (complaintIdStr != null && !complaintIdStr.isEmpty() && commentText != null && !commentText.trim().isEmpty()) {
+            try {
+                int complaintId = Integer.parseInt(complaintIdStr);
+                Comment comment = new Comment();
+                comment.setComplaintId(complaintId);
+                comment.setUserId(user.getId());
+                comment.setCommentText(commentText.trim());
+                commentDAO.addComment(comment);
+                
+                // If it's an AJAX request, just return success
+                if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With")) || request.getParameter("ajax") != null) {
+                    response.getWriter().write("OK");
+                    return;
+                }
+                
+                response.sendRedirect(request.getContextPath() + "/feed#complaint-" + complaintId);
+                return;
+            } catch (NumberFormatException e) {
+                // Ignore invalid IDs
+            }
+        }
+
+        response.sendRedirect(request.getContextPath() + "/feed");
+    }
+}
