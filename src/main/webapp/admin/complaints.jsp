@@ -596,3 +596,48 @@
         document.getElementById('mSidebar').classList.toggle('show');
         document.getElementById('mOverlay').classList.toggle('show');
       }
+      // Frontend Filtering
+      const searchInput = document.getElementById('searchInp');
+      const catFilter = document.getElementById('catFilter');
+      const sevFilter = document.getElementById('sevFilter');
+      const wardFilter = document.getElementById('wardFilter');
+      const statFilter = document.getElementById('statFilter');
+      const rows = document.querySelectorAll('#complaintsTable tbody tr');
+
+      function filterTable() {
+        const sTxt = searchInput.value.toLowerCase();
+        const cVal = catFilter.value;
+        const sVal = sevFilter.value;
+        const wVal = wardFilter.value;
+        const stVal = statFilter.value;
+
+        rows.forEach(row => {
+          if (!row.hasAttribute('data-cat')) return; // skip 'no records' row
+          const rTitle = row.querySelector('.t-title').textContent.toLowerCase();
+          const rId = row.querySelector('td strong').textContent.toLowerCase();
+
+          const cat = row.getAttribute('data-cat');
+          const sev = row.getAttribute('data-sev');
+          const ward = row.getAttribute('data-ward');
+          const stat = row.getAttribute('data-stat');
+
+          let show = true;
+          if (sTxt && !rTitle.includes(sTxt) && !rId.includes(sTxt)) show = false;
+          if (cVal !== 'All Categories' && cat.toLowerCase() !== cVal.toLowerCase()) show = false;
+          if (sVal !== 'All Severities' && sev.toLowerCase() !== sVal.toLowerCase()) show = false;
+          if (wVal !== 'All Wards' && ward.toLowerCase() !== wVal.toLowerCase()) show = false;
+          if (stVal !== 'Any Status' && stat.toLowerCase() !== stVal.toLowerCase()) show = false;
+
+          row.style.display = show ? '' : 'none';
+        });
+      }
+
+      searchInput.addEventListener('input', filterTable);
+      catFilter.addEventListener('change', filterTable);
+      sevFilter.addEventListener('change', filterTable);
+      wardFilter.addEventListener('change', filterTable);
+      statFilter.addEventListener('change', filterTable);
+    </script>
+  </body>
+
+  </html>
