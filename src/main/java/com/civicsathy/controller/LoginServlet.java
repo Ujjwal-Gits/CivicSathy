@@ -9,11 +9,21 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
+/**
+ * Servlet controller handling HTTP requests and responses for LoginServlet operations.
+ *
+ * @author Aastha
+ * @version 1.0
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private UserDAO userDAO;
 
     @Override
+    /**
+     * Executes the init operation.
+     *
+     */
     public void init() {
         userDAO = new UserDAO();
     }
@@ -60,7 +70,7 @@ public class LoginServlet extends HttpServlet {
                 }
 
                 if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-                    response.sendRedirect(request.getContextPath() + "/admin/dashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/admin/dashboard-stats");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/citizen/feed.jsp");
                 }
