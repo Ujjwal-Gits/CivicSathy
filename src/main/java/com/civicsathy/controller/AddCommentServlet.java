@@ -24,4 +24,43 @@ import java.io.IOException;
 public class AddCommentServlet extends HttpServlet {
     private CommentDAO commentDAO;
 
-  
+    @Override
+    /**
+     * Executes the init operation.
+     *
+     */
+    public void init() {
+        commentDAO = new CommentDAO();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // user must be logged in
+        User user = (User) request.getSession().getAttribute("loggedInUser");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/citizen/login.jsp?error=You must be logged in to comment.");
+            return;
+        }
+
+        String action = request.getParameter("action");
+
+        // if action is "delete", handle deletion
+        if ("delete".equals(action)) {
+            String commentIdStr = request.getParameter("commentId");
+            if (commentIdStr != null && !commentIdStr.isEmpty()) {
+                int commentId = Integer.parseInt(commentIdStr);
+                // deleteComment checks user_id, so only owner can delete
+                boolean deleted = commentDAO.deleteComment(commentId, user.getId());
+                if (deleted) {
+                    response.getWriter().write("OK");
+                } else {
+                    response.setStatus(403);
+                    response.getWriter().write("NOT_ALLOWED");
+                }
+            }
+            return;
+        }
+
+        
