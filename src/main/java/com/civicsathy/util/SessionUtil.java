@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpSession;
 /**
  * Utility class providing helper methods for SessionUtil.
  *
- * @author Ujjwal
+ * @author Aastha
  * @version 1.0
  */
 public class SessionUtil {
