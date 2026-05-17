@@ -9,12 +9,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Filter to control access to citizen pages.
+ * Filter responsible for handling authentication
+ * and access control for citizen-related pages.
  *
- * This filter checks whether a user is logged in before
- * accessing protected citizen resources.
+ * <p>This filter checks whether a user session exists
+ * before allowing access to protected resources.
  * Public pages such as login, registration, feed,
- * and tracking pages are accessible without authentication.
+ * and tracking pages are accessible without authentication.</p>
  *
  * @author Aastha
  * @version 1.0
@@ -22,16 +23,31 @@ import java.io.IOException;
 @WebFilter("/citizen/*")
 public class AuthFilter implements Filter {
 
-    /**
-     * Filters incoming requests and validates user authentication.
-     *
-     * @param request  client request object
-     * @param response server response object
-     * @param chain    filter chain for passing request/response
-     * @throws IOException if input or output exception occurs
-     * @throws ServletException if servlet exception occurs
-     */
     @Override
+    /**
+     * Initializes the filter configuration.
+     *
+     * @param filterConfig configuration object provided by the servlet container
+     * @throws ServletException if filter initialization fails
+     */
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    @Override
+    /**
+     * Filters incoming requests and validates
+     * whether the user is authenticated.
+     *
+     * <p>If the requested page is public, the request
+     * proceeds without authentication. Otherwise,
+     * the filter checks the session for a logged-in user.</p>
+     *
+     * @param request  incoming client request
+     * @param response outgoing server response
+     * @param chain    filter chain for passing request and response
+     * @throws IOException if an input/output error occurs
+     * @throws ServletException if servlet processing fails
+     */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
@@ -61,5 +77,12 @@ public class AuthFilter implements Filter {
             res.sendRedirect(req.getContextPath()
                     + "/citizen/login.jsp?error=Please login to access this page");
         }
+    }
+
+    @Override
+    /**
+     * Cleans up filter resources before destruction.
+     */
+    public void destroy() {
     }
 }
