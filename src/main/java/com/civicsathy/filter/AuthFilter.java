@@ -9,13 +9,12 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Filter responsible for handling authentication
- * and access control for citizen-related pages.
+ * Filter used to protect citizen pages from unauthorized access.
  *
- * <p>This filter checks whether a user session exists
- * before allowing access to protected resources.
- * Public pages such as login, registration, feed,
- * and tracking pages are accessible without authentication.</p>
+ * <p>This filter checks whether a user is logged in before
+ * allowing access to protected pages. Public pages such as
+ * login, register, feed, and track pages can be accessed
+ * without authentication.</p>
  *
  * @author Aastha
  * @version 1.0
@@ -25,28 +24,23 @@ public class AuthFilter implements Filter {
 
     @Override
     /**
-     * Initializes the filter configuration.
+     * Initializes the filter.
      *
-     * @param filterConfig configuration object provided by the servlet container
-     * @throws ServletException if filter initialization fails
+     * @param filterConfig filter configuration object
+     * @throws ServletException if initialization fails
      */
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
     @Override
     /**
-     * Filters incoming requests and validates
-     * whether the user is authenticated.
+     * Checks user authentication before processing requests.
      *
-     * <p>If the requested page is public, the request
-     * proceeds without authentication. Otherwise,
-     * the filter checks the session for a logged-in user.</p>
-     *
-     * @param request  incoming client request
-     * @param response outgoing server response
-     * @param chain    filter chain for passing request and response
-     * @throws IOException if an input/output error occurs
-     * @throws ServletException if servlet processing fails
+     * @param request client request object
+     * @param response server response object
+     * @param chain filter chain object
+     * @throws IOException if an input or output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -81,7 +75,7 @@ public class AuthFilter implements Filter {
 
     @Override
     /**
-     * Cleans up filter resources before destruction.
+     * Destroys the filter before shutdown.
      */
     public void destroy() {
     }
