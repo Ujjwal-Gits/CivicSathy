@@ -1,4 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.civicsathy.dao.InventoryDAO" %>
+<%@ page import="com.civicsathy.model.Vehicle" %>
+<%@ page import="com.civicsathy.model.Team" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,13 +36,38 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 .input-base{width:100%;height:44px;border:1px solid #E8E8ED;border-radius:6px;padding:0 14px;font-size:14px;font-family:inherit;color:#0A0A0A;outline:none;background:#fff;}
 .input-base:focus{border-color:#005B96;box-shadow:0 0 0 3px #EBF5FF;}
 .btn-primary{background:#0A0A0A;color:#fff;border:none;height:44px;padding:0 24px;border-radius:6px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;}
-.btn-outline{border:1px solid #E8E8ED;background:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;color:#005B96;}.btn-outline:hover{background:#F5F5F7;}
+.btn-outline{background:#fff;color:#005B96;border:1px solid #005B96;height:32px;padding:0 16px;border-radius:6px;font-size:12px;font-weight:600;transition:.15s;cursor:pointer;}
+.btn-outline:hover{background:#EBF5FF;}
+.btn-save{background:#1A7F4B;color:#fff;border:none;height:32px;padding:0 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;}
+.edit-input{width:60px;height:30px;border:1px solid #E8E8ED;border-radius:4px;padding:0 8px;font-size:13px;text-align:center;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
 table{width:100%;border-collapse:collapse;}
 th,td{padding:14px 16px;text-align:left;font-size:13px;border-bottom:1px solid #E8E8ED;}
 th{font-weight:700;color:#86868B;text-transform:uppercase;font-size:11px;letter-spacing:.05em;background:#FBFBFD;}
 tr:last-child td{border-bottom:none;}
 .add-form{background:#F9FAFB;padding:20px;border-radius:8px;border:1px solid #E8E8ED;margin-top:20px;}
+
+/* MOBILE OVERRIDES */
+.m-header{display:none;}.m-sidebar{display:none;}
+@media(max-width:768px){
+  body{display:block !important; overflow:visible;}
+  .m-header{width:100%; box-sizing:border-box;}
+  .sidebar{display:none !important;}
+  .topbar{display:none !important;}
+  .main{height:auto;min-height:100vh;overflow:visible;}
+  .content{padding:16px;padding-bottom:60px;}
+  .g2{grid-template-columns:1fr !important;gap:16px;}
+  .panel{padding:16px;}
+  
+  .m-header{display:flex;align-items:center;gap:12px;height:60px;background:#fff;border-bottom:1px solid #E8E8ED;padding:0 16px;position:sticky;top:0;z-index:2001;}
+  .m-burger{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#F5F5F7;border-radius:8px;color:#1D1D1F;}
+  .m-logo{font-size:17px;font-weight:700;letter-spacing:-.3px;}.m-logo span{color:#005B96;}
+  
+  .m-sidebar{display:flex;flex-direction:column;position:fixed;top:0;left:-280px;width:280px;height:100vh;background:#fff;z-index:2000;transition:.3s cubic-bezier(0.4, 0, 0.2, 1);visibility:hidden;}
+  .m-sidebar.show{left:0;visibility:visible;box-shadow:20px 0 50px rgba(0,0,0,0.15);}
+  .m-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);z-index:1999;}
+  .m-overlay.show{display:block;}
+}
 </style>
 </head>
 <body>
@@ -46,21 +75,54 @@ tr:last-child td{border-bottom:none;}
   <div class="sb-brand"><div class="sb-logo">Civic<span>Sathy</span></div><div class="sb-badge"><i data-lucide="shield-check" style="width:10px;height:10px;"></i> Admin Portal</div></div>
   <nav class="sb-nav">
     <div class="sb-sec">Overview</div>
-    <a class="sb-item" href="dashboard.jsp"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
-    <a class="sb-item" href="complaints.jsp"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/dashboard-stats"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/complaints"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
     <div class="sb-sec">Management</div>
-    <a class="sb-item" href="ticket.jsp"><i data-lucide="inbox" style="width:18px;height:18px;"></i> Active Ticket</a>
-    <a class="sb-item danger" href="complaints.jsp"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations <span class="badge-red">5</span></a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/tasks"><i data-lucide="clipboard-list" style="width:18px;height:18px;"></i> Assigned Tasks</a>
+    <a class="sb-item danger" href="${pageContext.request.contextPath}/admin/escalations"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations <span class="badge-red"><%= new com.civicsathy.dao.ComplaintDAO().getEscalatedCount() %></span></a>
     <div class="sb-sec">Analytics & Map</div>
-    <a class="sb-item" href="map.jsp"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/map-data"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
     <div class="sb-sec">Communications</div>
     <a class="sb-item" href="announcements.jsp"><i data-lucide="radio" style="width:18px;height:18px;"></i> Broadcast</a>
     <div class="sb-sec">System</div>
     <a class="sb-item active" href="teams.jsp"><i data-lucide="users" style="width:18px;height:18px;"></i> Team Management</a>
     <a class="sb-item" href="settings.jsp"><i data-lucide="settings" style="width:18px;height:18px;"></i> Profile & Settings</a>
   </nav>
-  <div class="sb-footer"><a href="admin-login.jsp"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
+  <div class="sb-footer"><a href="${pageContext.request.contextPath}/logout"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
 </aside>
+
+<!-- MOBILE HEADER -->
+<div class="m-header">
+  <button class="m-burger" onclick="toggleMSB()"><i data-lucide="menu" style="width:20px;"></i></button>
+  <div class="m-logo">Civic<span>Sathy</span></div>
+</div>
+
+<!-- MOBILE SIDEBAR -->
+<div class="m-overlay" id="mOverlay" onclick="toggleMSB()"></div>
+<div class="m-sidebar" id="mSidebar">
+  <div class="sb-brand">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+      <div class="sb-logo">Civic<span>Sathy</span></div>
+      <button onclick="toggleMSB()" style="background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    </div>
+    <div class="sb-badge"><i data-lucide="shield-check" style="width:10px;height:10px;"></i> Admin Portal</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/dashboard-stats"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/complaints"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
+    <div class="sb-sec">Management</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/tasks"><i data-lucide="clipboard-list" style="width:18px;height:18px;"></i> Assigned Tasks</a>
+    <a class="sb-item danger" href="${pageContext.request.contextPath}/admin/escalations"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations</a>
+    <div class="sb-sec">Analytics & Map</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/map-data"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
+    <div class="sb-sec">System</div>
+    <a class="sb-item active" href="teams.jsp"><i data-lucide="users" style="width:18px;height:18px;"></i> Teams</a>
+    <a class="sb-item" href="settings.jsp"><i data-lucide="settings" style="width:18px;height:18px;"></i> Settings</a>
+  </nav>
+  <div class="sb-footer"><a href="${pageContext.request.contextPath}/logout"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
+</div>
+
 <div class="main">
   <header class="topbar"><span class="tb-title">Team & Resource Management</span></header>
   <div class="content">
@@ -73,22 +135,45 @@ tr:last-child td{border-bottom:none;}
         <table>
           <thead><tr><th>Vehicle Name</th><th>Total Count</th><th>Available</th><th>Deployed</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><strong>Fire Truck</strong></td><td>3</td><td style="color:#1A7F4B;font-weight:600;">2</td><td style="color:#D93025;font-weight:600;">1</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Garbage Collection Truck</strong></td><td>8</td><td style="color:#1A7F4B;font-weight:600;">2</td><td style="color:#D93025;font-weight:600;">6</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Water Tanker</strong></td><td>4</td><td style="color:#1A7F4B;font-weight:600;">3</td><td style="color:#D93025;font-weight:600;">1</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Road Roller</strong></td><td>2</td><td style="color:#1A7F4B;font-weight:600;">0</td><td style="color:#D93025;font-weight:600;">2</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Excavator</strong></td><td>2</td><td style="color:#1A7F4B;font-weight:600;">1</td><td style="color:#D93025;font-weight:600;">1</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Ambulance</strong></td><td>3</td><td style="color:#1A7F4B;font-weight:600;">2</td><td style="color:#D93025;font-weight:600;">1</td><td><button class="btn-outline">Edit</button></td></tr>
+            <% 
+               InventoryDAO invDAO = new InventoryDAO();
+               List<Vehicle> vehicles = invDAO.getAvailableVehicles();
+               for (Vehicle v : vehicles) { 
+                 int deployed = v.getTotalCount() - v.getAvailableCount();
+            %>
+            <tr id="veh-row-<%= v.getId() %>">
+              <td><strong><%= v.getVehicleName() %></strong></td>
+              <td id="veh-count-<%= v.getId() %>"><%= v.getTotalCount() %></td>
+              <td style="color:#1A7F4B;font-weight:600;"><%= v.getAvailableCount() %></td>
+              <td style="color:#D93025;font-weight:600;"><%= deployed %></td>
+              <td><button class="btn-outline" onclick="toggleVehEdit(<%= v.getId() %>, <%= v.getTotalCount() %>)">Edit</button></td>
+            </tr>
+            <tr id="veh-edit-<%= v.getId() %>" style="display:none; background:#F9FAFB;">
+              <td colspan="5">
+                <form action="${pageContext.request.contextPath}/admin/resource" method="post" style="display:flex;align-items:center;gap:12px;">
+                  <input type="hidden" name="action" value="updateVehicle">
+                  <input type="hidden" name="id" value="<%= v.getId() %>">
+                  <span style="font-size:13px;font-weight:600;">Update Total Count for <%= v.getVehicleName() %>:</span>
+                  <input type="number" name="count" class="edit-input" value="<%= v.getTotalCount() %>" required min="<%= deployed %>">
+                  <button type="submit" class="btn-save">Save</button>
+                  <button type="button" class="btn-outline" style="border:none;" onclick="cancelVehEdit(<%= v.getId() %>)">Cancel</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
       <div class="add-form">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Add New Vehicle</div>
-        <div style="display:flex;gap:16px;align-items:flex-end;">
-          <div class="field" style="flex:2;margin-bottom:0;"><label>Vehicle Name</label><input type="text" class="input-base" placeholder="E.g. Crane, Loader"></div>
-          <div class="field" style="flex:1;margin-bottom:0;"><label>Quantity</label><input type="number" class="input-base" value="1"></div>
-          <button class="btn-primary"><i data-lucide="plus" style="width:14px;"></i> Add</button>
-        </div>
+        <form action="${pageContext.request.contextPath}/admin/resource" method="post">
+          <input type="hidden" name="action" value="addVehicle">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Add New Vehicle</div>
+          <div style="display:flex;gap:16px;align-items:flex-end;">
+            <div class="field" style="flex:2;margin-bottom:0;"><label>Vehicle Name</label><input type="text" name="name" class="input-base" placeholder="E.g. Crane, Loader" required></div>
+            <div class="field" style="flex:1;margin-bottom:0;"><label>Quantity</label><input type="number" name="count" class="input-base" value="1" required min="1"></div>
+            <button type="submit" class="btn-primary"><i data-lucide="plus" style="width:14px;"></i> Add</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -100,22 +185,45 @@ tr:last-child td{border-bottom:none;}
         <table>
           <thead><tr><th>Department</th><th>Total Members</th><th>Available</th><th>On Duty</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><strong>Firebrigade</strong></td><td>15</td><td style="color:#1A7F4B;font-weight:600;">10</td><td style="color:#D93025;font-weight:600;">5</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Municipality Police</strong></td><td>45</td><td style="color:#1A7F4B;font-weight:600;">30</td><td style="color:#D93025;font-weight:600;">15</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Repair Technicians</strong></td><td>12</td><td style="color:#1A7F4B;font-weight:600;">0</td><td style="color:#D93025;font-weight:600;">12</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Sanitation Workers</strong></td><td>35</td><td style="color:#1A7F4B;font-weight:600;">10</td><td style="color:#D93025;font-weight:600;">25</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Electricians</strong></td><td>8</td><td style="color:#1A7F4B;font-weight:600;">5</td><td style="color:#D93025;font-weight:600;">3</td><td><button class="btn-outline">Edit</button></td></tr>
-            <tr><td><strong>Plumbers</strong></td><td>6</td><td style="color:#1A7F4B;font-weight:600;">4</td><td style="color:#D93025;font-weight:600;">2</td><td><button class="btn-outline">Edit</button></td></tr>
+            <% 
+               List<Team> teams = invDAO.getAvailableTeams();
+               for (Team t : teams) { 
+                 int deployed = t.getMemberCount() - t.getAvailableCount();
+            %>
+            <tr id="team-row-<%= t.getId() %>">
+              <td><strong><%= t.getTeamName() %></strong></td>
+              <td><%= t.getMemberCount() %></td>
+              <td style="color:#1A7F4B;font-weight:600;"><%= t.getAvailableCount() %></td>
+              <td style="color:#D93025;font-weight:600;"><%= deployed %></td>
+              <td><button class="btn-outline" onclick="toggleTeamEdit(<%= t.getId() %>, <%= t.getMemberCount() %>)">Edit</button></td>
+            </tr>
+            <tr id="team-edit-<%= t.getId() %>" style="display:none; background:#F9FAFB;">
+              <td colspan="5">
+                <form action="${pageContext.request.contextPath}/admin/resource" method="post" style="display:flex;align-items:center;gap:12px;">
+                  <input type="hidden" name="action" value="updateTeam">
+                  <input type="hidden" name="id" value="<%= t.getId() %>">
+                  <span style="font-size:13px;font-weight:600;">Update Total Members for <%= t.getTeamName() %>:</span>
+                  <input type="number" name="count" class="edit-input" value="<%= t.getMemberCount() %>" required min="<%= deployed %>">
+                  <button type="submit" class="btn-save">Save</button>
+                  <button type="button" class="btn-outline" style="border:none;" onclick="cancelTeamEdit(<%= t.getId() %>)">Cancel</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
       <div class="add-form">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Add New Department</div>
-        <div style="display:flex;gap:16px;align-items:flex-end;">
-          <div class="field" style="flex:2;margin-bottom:0;"><label>Department Name</label><input type="text" class="input-base" placeholder="E.g. Carpenters, Welders"></div>
-          <div class="field" style="flex:1;margin-bottom:0;"><label>Member Count</label><input type="number" class="input-base" value="1"></div>
-          <button class="btn-primary"><i data-lucide="plus" style="width:14px;"></i> Add</button>
-        </div>
+        <form action="${pageContext.request.contextPath}/admin/resource" method="post">
+          <input type="hidden" name="action" value="addTeam">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Add New Department</div>
+          <div style="display:flex;gap:16px;align-items:flex-end;">
+            <div class="field" style="flex:2;margin-bottom:0;"><label>Department Name</label><input type="text" name="name" class="input-base" placeholder="E.g. Carpenters, Welders" required></div>
+            <div class="field" style="flex:1;margin-bottom:0;"><label>Type</label><input type="text" name="type" class="input-base" placeholder="e.g. Sanitation" required></div>
+            <div class="field" style="flex:1;margin-bottom:0;"><label>Member Count</label><input type="number" name="count" class="input-base" value="1" required min="1"></div>
+            <button type="submit" class="btn-primary"><i data-lucide="plus" style="width:14px;"></i> Add</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -132,6 +240,28 @@ tr:last-child td{border-bottom:none;}
 
   </div>
 </div>
-<script>lucide.createIcons();</script>
+<script>
+  lucide.createIcons();
+  function toggleMSB() {
+    document.getElementById('mSidebar').classList.toggle('show');
+    document.getElementById('mOverlay').classList.toggle('show');
+  }
+  function toggleVehEdit(id, count) {
+    document.getElementById('veh-row-' + id).style.display = 'none';
+    document.getElementById('veh-edit-' + id).style.display = 'table-row';
+  }
+  function cancelVehEdit(id) {
+    document.getElementById('veh-row-' + id).style.display = 'table-row';
+    document.getElementById('veh-edit-' + id).style.display = 'none';
+  }
+  function toggleTeamEdit(id, count) {
+    document.getElementById('team-row-' + id).style.display = 'none';
+    document.getElementById('team-edit-' + id).style.display = 'table-row';
+  }
+  function cancelTeamEdit(id) {
+    document.getElementById('team-row-' + id).style.display = 'table-row';
+    document.getElementById('team-edit-' + id).style.display = 'none';
+  }
+</script>
 </body>
 </html>
