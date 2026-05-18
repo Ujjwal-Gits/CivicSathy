@@ -22,4 +22,24 @@ import java.util.List;
 public class EscalationServlet extends HttpServlet {
     private ComplaintDAO complaintDAO;
 
+    @Override
+    /**
+     * Executes the init operation.
+     *
+     */
+    public void init() {
+        complaintDAO = new ComplaintDAO();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // get all complaints that are past the 48 hour deadline
+        List<Complaint> escalated = complaintDAO.getEscalatedComplaints();
+        request.setAttribute("escalatedComplaints", escalated);
+        request.setAttribute("escalatedCount", escalated.size());
+
+        request.getRequestDispatcher("/admin/escalations.jsp").forward(request, response);
+    }
 }
