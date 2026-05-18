@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+
 
 // handles profile viewing and updating
 /**
@@ -68,4 +68,34 @@ public class ProfileServlet extends HttpServlet {
         request.getRequestDispatcher("/citizen/profile.jsp").forward(request, response);
     }
 
+    // handle profile update form
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        User user = (User) request.getSession().getAttribute("loggedInUser");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/citizen/login.jsp");
+            return;
+        }
+
+        // update basic info
+        user.setFullName(request.getParameter("fullName"));
+        user.setContactNo(request.getParameter("phone"));
+        user.setWardNo(request.getParameter("wardNo"));
+        user.setLocation(request.getParameter("location"));
+
+        userDAO.updateProfile(user);
+
+        // update password if provided
+        String newPassword = request.getParameter("newPassword");
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            String hashed = PasswordUtil.hashPassword(newPassword);
+            userDAO.updatePassword(user.getId(), hashed);
+        }
+
+        // update session with new data
+        request.getSession().setAttribute("loggedInUser", user);
+        response.sendRedirect(request.getContextPath() + "/profile?success=Profile updated");
+    }
 }
