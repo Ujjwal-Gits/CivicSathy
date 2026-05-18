@@ -29,4 +29,46 @@ public class TrackServlet extends HttpServlet {
     private StatusHistoryDAO statusHistoryDAO;
     private NotificationDAO notificationDAO;
 
+    @Override
+    /**
+     * Executes the init operation.
+     *
+     */
+    public void init() {
+        complaintDAO = new ComplaintDAO();
+        statusHistoryDAO = new StatusHistoryDAO();
+        notificationDAO = new NotificationDAO();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String trackingId = request.getParameter("id");
+
+        if (trackingId != null && !trackingId.trim().isEmpty()) {
+            // find the complaint by tracking id
+            Complaint complaint = complaintDAO.getByTrackingId(trackingId.trim());
+
+            if (complaint != null) {
+                request.setAttribute("complaint", complaint);
+
+                // get the full timeline for this complaint
+                List<StatusHistory> timeline = statusHistoryDAO.getByComplaintId(complaint.getId());
+                request.setAttribute("timeline", timeline);
+            } else {
+                request.setAttribute("error", "No complaint found with ID: " + trackingId);
+            }
+        }
+
+        // load notifications for logged-in user navbar
+        User user = (User) request.getSession().getAttribute("loggedInUser");
+        if (user != null) {
+            List<Notification> notifications = notificationDAO.getByUserId(user.getId());
+            request.setAttribute("notifications", notifications);
+            request.setAttribute("unreadCount", notificationDAO.getUnreadCount(user.getId()));
+        }
+
+        request.getRequestDispatcher("/citizen/track.jsp").forward(request, response);
+    }
 }
