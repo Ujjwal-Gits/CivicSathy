@@ -44,4 +44,45 @@ public class AnnouncementDAO {
         }
         return list;
     }
+
+    // admin posts a new announcement
+    /**
+     * Executes the addAnnouncement operation.
+     *
+     * @param a The a object/value.
+     * @return The resulting boolean.
+     */
+    public boolean addAnnouncement(Announcement a) {
+        String sql = "INSERT INTO announcements (admin_id, title, message, icon) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, a.getAdminId());
+            stmt.setString(2, a.getTitle());
+            stmt.setString(3, a.getMessage());
+            stmt.setString(4, a.getIcon());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // deactivate an announcement
+    /**
+     * Executes the deactivate operation.
+     *
+     * @param id The id object/value.
+     * @return The resulting boolean.
+     */
+    public boolean deactivate(int id) {
+        String sql = "UPDATE announcements SET is_active = FALSE WHERE id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
