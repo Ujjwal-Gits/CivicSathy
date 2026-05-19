@@ -1,4 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.civicsathy.model.User" %>
+<%
+    // Ensure this page was loaded via the Servlet
+    if (request.getAttribute("complaints") == null && request.getAttribute("announcements") == null) {
+        response.sendRedirect(request.getContextPath() + "/feed");
+        return;
+    }
+
+    User loggedInUser = (User) session.getAttribute("loggedInUser");
+    boolean isLoggedIn = (loggedInUser != null);
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +32,22 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#D93025;border-radius:50%;border:2px solid #fff;}
 .btn-sos{background:#D93025;color:#fff;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;}
 .btn-login-top{background:#005B96;color:#fff;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;}
+.profile-wrap{position:relative;}
+.profile-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:#EBF5FF;border-radius:6px;font-size:12px;font-weight:600;color:#005B96;cursor:pointer;border:1px solid #BAE6FD;}
+.profile-dd{display:none;position:absolute;top:42px;right:0;background:#fff;border:1px solid #E8E8ED;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,0.08);width:180px;z-index:200;overflow:hidden;}
+.profile-dd.show{display:block;}
+.dd-name{padding:12px 14px;border-bottom:1px solid #E8E8ED;font-size:12px;font-weight:700;color:#1D1D1F;}
+.dd-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;font-weight:500;color:#4B5563;transition:.15s;}
+.dd-item:hover{background:#F5F5F7;}
+.dd-item.red{color:#D93025;}.dd-item.red:hover{background:#FEF2F2;}
+.notif-dd{display:none;position:absolute;top:42px;right:60px;background:#fff;border:1px solid #E8E8ED;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);width:320px;z-index:200;max-height:400px;overflow-y:auto;}
+.notif-dd.show{display:block;}
+.notif-dd-hd{padding:14px 16px;border-bottom:1px solid #E8E8ED;font-size:13px;font-weight:700;color:#1D1D1F;display:flex;justify-content:space-between;align-items:center;}
+.notif-item{padding:12px 16px;border-bottom:1px solid #F5F5F7;display:block;}
+.notif-item:hover{background:#F9FAFB;}
+.notif-title{font-size:12px;font-weight:600;color:#1D1D1F;margin-bottom:4px;line-height:1.4;}
+.notif-time{font-size:10px;color:#86868B;}
+.notif-empty{padding:24px;text-align:center;font-size:12px;color:#86868B;}
 
 /* LAYOUT */
 .app{display:flex;flex:1;}
@@ -60,7 +87,11 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 .c-cat{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#4B5563;text-transform:uppercase;letter-spacing:.04em;}
 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:4px 8px;border-radius:4px;}
-.b-prog{background:#EBF5FF;color:#005B96;}.b-pend{background:#FEF3C7;color:#B45309;}.b-res{background:#D1FAE5;color:#065F46;}
+.b-prog{background:#EBF5FF;color:#005B96;}
+.b-pend{background:#FEF3C7;color:#B45309;}
+.b-res{background:#D1FAE5;color:#065F46;}
+.b-esc{background:#FEE2E2;color:#991B1B;}
+.b-closed{background:#F3F4F6;color:#374151;}
 .c-title{font-size:15px;font-weight:700;line-height:1.35;margin-bottom:6px;}
 .c-desc{font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:12px;}
 .c-img{width:100%;max-height:400px;object-fit:cover;border-radius:10px;margin:14px 0;border:1px solid #E8E8ED;}
@@ -103,7 +134,7 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
   .feed-col{padding:16px;height:auto;}
   .fh-btns{display:none;}
   .c-img{height:140px;}
-  .m-bnav{display:flex;align-items:center;justify-content:space-around;position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;height:64px;padding:0 8px;border-top:1px solid #E8E8ED;padding-bottom:env(safe-area-inset-bottom);}
+  .m-bnav{display:flex;align-items:center;justify-content:space-around;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#fff;height:64px;padding:0 8px;border-top:1px solid #E8E8ED;padding-bottom:env(safe-area-inset-bottom);}
   .mn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:1;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#86868B;}
   .mn.active{color:#005B96;}.mn.red{color:#D93025;}
   .mfab-w{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}
@@ -118,33 +149,141 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 <header class="topbar">
   <div class="tb-left"><div class="tb-logo">Civic<span>Sathy</span></div><div class="tb-sub">Itahari Sub-Metropolitan</div></div>
   <div class="tb-right">
-    <button class="tb-icon"><i data-lucide="search" style="width:18px;"></i></button>
-    <button class="tb-icon"><i data-lucide="bell" style="width:18px;"></i><span class="notif-dot"></span></button>
-    <button class="btn-sos"><i data-lucide="phone" style="width:13px;"></i> SOS</button>
-    <a href="login.jsp"><button class="btn-login-top"><i data-lucide="log-in" style="width:13px;"></i> Login</button></a>
+    <div style="position:relative;">
+      <button class="tb-icon" onclick="document.getElementById('notifDD').classList.toggle('show'); document.getElementById('profileDD').classList.remove('show');"><i data-lucide="bell" style="width:18px;"></i>
+        <% if (request.getAttribute("unreadCount") != null && ((Integer)request.getAttribute("unreadCount")) > 0) { %>
+        <span class="notif-dot"></span>
+        <% } %>
+      </button>
+      <div class="notif-dd" id="notifDD">
+        <div class="notif-dd-hd"><span>Notifications</span></div>
+        <% 
+           java.util.List<com.civicsathy.model.Notification> topNotifs = (java.util.List<com.civicsathy.model.Notification>) request.getAttribute("notifications");
+           if (topNotifs != null && !topNotifs.isEmpty()) {
+               for (com.civicsathy.model.Notification n : topNotifs) {
+                   long diffMs = System.currentTimeMillis() - n.getCreatedAt().getTime();
+                   long diffMins = diffMs / 60000;
+                   String timeAgo = diffMins < 1 ? "Just now" : (diffMins < 60 ? diffMins + " min ago" : (diffMins < 1440 ? (diffMins / 60) + " hours ago" : (diffMins / 1440) + " days ago"));
+        %>
+        <a href="${pageContext.request.contextPath}/track?id=<%= n.getComplaintId() %>" class="notif-item">
+          <div class="notif-title"><%= n.getMessage() %></div>
+          <div class="notif-time"><%= timeAgo %></div>
+        </a>
+        <% } } else { %>
+        <div class="notif-empty">No new notifications.</div>
+        <% } %>
+      </div>
+    </div>
+    <button class="btn-sos" onclick="document.getElementById('sosModalDesktop').style.display='flex'"><i data-lucide="phone" style="width:13px;"></i> SOS</button>
+    <% if (isLoggedIn) { %>
+    <div class="profile-wrap">
+      <div class="profile-btn" onclick="document.getElementById('profileDD').classList.toggle('show'); document.getElementById('notifDD').classList.remove('show');">
+        <i data-lucide="user" style="width:14px;"></i> <%= loggedInUser.getFullName().split(" ")[0] %>
+        <i data-lucide="chevron-down" style="width:12px;"></i>
+      </div>
+      <div class="profile-dd" id="profileDD">
+        <div class="dd-name"><%= loggedInUser.getFullName() %></div>
+        <a href="${pageContext.request.contextPath}/profile" class="dd-item"><i data-lucide="user" style="width:14px;"></i> My Profile</a>
+        <a href="${pageContext.request.contextPath}/my-dashboard" class="dd-item"><i data-lucide="layout-dashboard" style="width:14px;"></i> My Dashboard</a>
+        <a href="${pageContext.request.contextPath}/logout" class="dd-item red"><i data-lucide="log-out" style="width:14px;"></i> Logout</a>
+      </div>
+    </div>
+    <% } else { %>
+    <a href="${pageContext.request.contextPath}/citizen/login.jsp"><button class="btn-login-top"><i data-lucide="log-in" style="width:13px;"></i> Login</button></a>
+    <% } %>
   </div>
 </header>
 
 <!-- MOBILE TOPBAR -->
 <header class="m-topbar">
-  <div class="tb-logo" style="font-size:17px;">Civic<span>Sathy</span></div>
+  <div class="tb-logo" style="font-size:17px;transform:translateY(1px);">Civic<span>Sathy</span></div>
   <div class="tb-right">
-    <button class="btn-sos" style="padding:6px 10px;font-size:11px;"><i data-lucide="phone" style="width:12px;"></i> SOS</button>
-    <a href="login.jsp"><button class="btn-login-top" style="padding:6px 10px;font-size:11px;"><i data-lucide="log-in" style="width:12px;"></i> Login</button></a>
+    <button class="btn-sos" style="padding:6px 10px;font-size:11px;" onclick="document.getElementById('sosModalMobile').style.display='flex'"><i data-lucide="phone" style="width:12px;"></i> SOS</button>
+    <% if (isLoggedIn) { %>
+    <a href="${pageContext.request.contextPath}/profile"><button class="profile-btn" style="padding:5px 10px;font-size:11px;"><i data-lucide="user" style="width:12px;"></i> <%= loggedInUser.getFullName().split(" ")[0] %></button></a>
+    <% } else { %>
+    <a href="${pageContext.request.contextPath}/citizen/login.jsp"><button class="btn-login-top" style="padding:6px 10px;font-size:11px;"><i data-lucide="log-in" style="width:12px;"></i> Login</button></a>
+    <% } %>
   </div>
 </header>
+
+<!-- SOS MODALS -->
+<div id="sosModalMobile" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:12px;width:100%;max-width:320px;padding:20px;position:relative;">
+    <button onclick="document.getElementById('sosModalMobile').style.display='none'" style="position:absolute;top:10px;right:10px;background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    <h3 style="color:#D93025;margin-bottom:16px;font-size:16px;display:flex;align-items:center;gap:6px;"><i data-lucide="siren" style="width:18px;"></i> Emergency (Top 3)</h3>
+    <a href="tel:100" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Police <span style="color:#86868B;font-size:12px;margin-left:4px;">100</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="tel:101" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Fire Brigade <span style="color:#86868B;font-size:12px;margin-left:4px;">101</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="tel:102" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Ambulance <span style="color:#86868B;font-size:12px;margin-left:4px;">102</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="${pageContext.request.contextPath}/citizen/contacts.jsp" style="display:block;text-align:center;margin-top:16px;color:#005B96;font-size:13px;font-weight:600;">View All Contacts &rarr;</a>
+  </div>
+</div>
+
+<!-- SOS MODALS -->
+<div id="sosModalMobile" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:12px;width:100%;max-width:320px;padding:20px;position:relative;">
+    <button onclick="document.getElementById('sosModalMobile').style.display='none'" style="position:absolute;top:10px;right:10px;background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    <h3 style="color:#D93025;margin-bottom:16px;font-size:16px;display:flex;align-items:center;gap:6px;"><i data-lucide="siren" style="width:18px;"></i> Emergency (Top 3)</h3>
+    <a href="tel:100" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Police <span style="color:#86868B;font-size:12px;margin-left:4px;">100</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="tel:101" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Fire Brigade <span style="color:#86868B;font-size:12px;margin-left:4px;">101</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="tel:102" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;margin-bottom:8px;"><div style="font-weight:700;font-size:14px;">Ambulance <span style="color:#86868B;font-size:12px;margin-left:4px;">102</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    <a href="${pageContext.request.contextPath}/citizen/contacts.jsp" style="display:block;text-align:center;margin-top:16px;color:#005B96;font-size:13px;font-weight:600;">View All Contacts &rarr;</a>
+  </div>
+</div>
+
+<div id="sosModalFull" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:12px;width:100%;max-width:500px;padding:24px;position:relative;max-height:85vh;overflow-y:auto;">
+    <button onclick="document.getElementById('sosModalFull').style.display='none'" style="position:absolute;top:15px;right:15px;background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    <h3 style="color:#D93025;margin-bottom:20px;font-size:18px;display:flex;align-items:center;gap:6px;"><i data-lucide="phone-call" style="width:20px;"></i> All Emergency Contacts</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;">
+      <a href="tel:100" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Police<br><span style="color:#86868B;font-size:11px;">100</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:101" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Fire Brigade<br><span style="color:#86868B;font-size:11px;">101</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:102" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Ambulance<br><span style="color:#86868B;font-size:11px;">102</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:103" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Traffic Police<br><span style="color:#86868B;font-size:11px;">103</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1149" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Disaster Helpline<br><span style="color:#86868B;font-size:11px;">1149</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1141" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Flood Helpline<br><span style="color:#86868B;font-size:11px;">1141</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1091" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Women Helpline<br><span style="color:#86868B;font-size:11px;">1091</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1098" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Child Helpline<br><span style="color:#86868B;font-size:11px;">1098</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    </div>
+    <div style="margin-top:16px;text-align:center;">
+      <a href="${pageContext.request.contextPath}/citizen/contacts.jsp" style="color:#005B96;font-size:13px;font-weight:600;">View Complete Directory &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div id="sosModalDesktop" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:12px;width:100%;max-width:500px;padding:24px;position:relative;max-height:80vh;overflow-y:auto;">
+    <button onclick="document.getElementById('sosModalDesktop').style.display='none'" style="position:absolute;top:15px;right:15px;background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    <h3 style="color:#D93025;margin-bottom:20px;font-size:18px;display:flex;align-items:center;gap:6px;"><i data-lucide="phone-call" style="width:20px;"></i> All Emergency Contacts</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <a href="tel:100" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Police<br><span style="color:#86868B;font-size:11px;">100</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:101" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Fire Brigade<br><span style="color:#86868B;font-size:11px;">101</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:102" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Ambulance<br><span style="color:#86868B;font-size:11px;">102</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:103" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Traffic Police<br><span style="color:#86868B;font-size:11px;">103</span></div><div style="background:#FEF2F2;color:#D93025;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1149" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Disaster Helpline<br><span style="color:#86868B;font-size:11px;">1149</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1141" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Flood Helpline<br><span style="color:#86868B;font-size:11px;">1141</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1091" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Women Helpline<br><span style="color:#86868B;font-size:11px;">1091</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+      <a href="tel:1098" style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #E8E8ED;border-radius:8px;"><div style="font-weight:700;font-size:13px;">Child Helpline<br><span style="color:#86868B;font-size:11px;">1098</span></div><div style="background:#EBF5FF;color:#005B96;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i data-lucide="phone" style="width:14px;"></i></div></a>
+    </div>
+    <div style="margin-top:16px;text-align:center;">
+      <a href="${pageContext.request.contextPath}/citizen/contacts.jsp" style="color:#005B96;font-size:13px;font-weight:600;">View Complete Directory &rarr;</a>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="app">
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sb-top"><a href="submit.jsp"><button class="btn-report"><i data-lucide="plus-circle" style="width:16px;"></i> Report an Issue</button></a></div>
+  <div class="sb-top"><a href="${pageContext.request.contextPath}/citizen/submit.jsp"><button class="btn-report"><i data-lucide="plus-circle" style="width:16px;"></i> Report an Issue</button></a></div>
   <nav class="sb-nav">
     <div class="sb-sec">Navigation</div>
-    <a href="feed.jsp" class="sb-item active"><i data-lucide="layout-grid" style="width:16px;"></i> Public Feed</a>
-    <a href="track.jsp" class="sb-item"><i data-lucide="search" style="width:16px;"></i> Track Complaint</a>
-    <a href="dashboard.jsp" class="sb-item"><i data-lucide="layout-dashboard" style="width:16px;"></i> My Dashboard</a>
-    <a href="profile.jsp" class="sb-item"><i data-lucide="user" style="width:16px;"></i> Profile Settings</a>
+    <a href="${pageContext.request.contextPath}/feed" class="sb-item active"><i data-lucide="layout-grid" style="width:16px;"></i> Public Feed</a>
+    <a href="${pageContext.request.contextPath}/track" class="sb-item"><i data-lucide="search" style="width:16px;"></i> Track Complaint</a>
+    <a href="${pageContext.request.contextPath}/my-dashboard" class="sb-item"><i data-lucide="layout-dashboard" style="width:16px;"></i> My Dashboard</a>
+    <a href="${pageContext.request.contextPath}/profile" class="sb-item"><i data-lucide="user" style="width:16px;"></i> Profile Settings</a>
     <div class="sb-sec">Quick Contacts</div>
     <a href="tel:100" class="sb-item red"><i data-lucide="siren" style="width:16px;"></i> Emergency: 100</a>
     <a href="tel:101" class="sb-item red"><i data-lucide="flame" style="width:16px;"></i> Fire Brigade: 101</a>
@@ -157,7 +296,7 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 <div class="feed-col">
 
   <div class="fh">
-    <div><h1 class="fh-title">Public Feed</h1><div class="fh-sub">24 reports · Sorted by recent activity</div></div>
+    <div><h1 class="fh-title">Public Feed</h1><div class="fh-sub"><%= request.getAttribute("complaints") != null ? ((java.util.List)request.getAttribute("complaints")).size() : 0 %> reports · Sorted by recent activity</div></div>
     <div class="fh-btns">
       <button class="fbtn active"><i data-lucide="clock" style="width:13px;"></i> Recent</button>
       <button class="fbtn"><i data-lucide="trending-up" style="width:13px;"></i> Most Affected</button>
@@ -169,72 +308,98 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
     <div class="tab active">All Issues</div><div class="tab">Roads</div><div class="tab">Garbage</div><div class="tab">Water</div><div class="tab">Electricity</div><div class="tab">Flooding</div><div class="tab">Safety</div>
   </div>
 
-  <!-- DUPLICATE DETECTION ALERT (Feature 9) -->
-  <div class="dup-alert"><i data-lucide="copy" style="width:16px;flex-shrink:0;"></i> A similar complaint about road cracks in Ward 14 was reported 3 hours ago. <a href="#" style="color:#92400E;font-weight:700;margin-left:auto;white-space:nowrap;">View →</a></div>
-
-  <!-- CARD 1 - WITH IMAGE (Features 1,2,3,4,12) -->
-  <div class="card">
+  <% 
+    java.util.List<com.civicsathy.model.Complaint> complaintsList = (java.util.List<com.civicsathy.model.Complaint>) request.getAttribute("complaints");
+    if (complaintsList != null && !complaintsList.isEmpty()) {
+      for (com.civicsathy.model.Complaint c : complaintsList) {
+        String s = c.getStatus() != null ? c.getStatus().toUpperCase() : "PENDING";
+        String badgeClass = "b-pend";
+        if (s.contains("PROGRESS") || s.equals("ASSIGNED")) badgeClass = "b-prog";
+        else if (s.equals("RESOLVED")) badgeClass = "b-res";
+        else if (s.equals("CLOSED")) badgeClass = "b-closed";
+        else if (s.equals("ESCALATED")) badgeClass = "b-esc";
+  %>
+  <div class="card" id="complaint-<%= c.getId() %>">
     <div class="c-top">
-      <div class="c-cat"><div class="dot" style="background:#C77B17;"></div> Infrastructure</div>
-      <div class="badge b-prog">In Progress</div>
+      <div class="c-cat"><div class="dot" style="background:#005B96;"></div> <%= c.getCategoryName() != null ? c.getCategoryName() : "General" %></div>
+      <div class="badge <%= badgeClass %>"><%= c.getStatus() %></div>
     </div>
-    <h2 class="c-title">Large cracks appearing on Itahari main bridge</h2>
-    <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80" alt="Bridge cracks" class="c-img">
-    <p class="c-desc">The cracks have widened significantly over the last 48 hours. Heavy vehicles are slowing down causing major traffic congestion during peak hours.</p>
+    <h2 class="c-title"><%= c.getTitle() != null ? c.getTitle() : "Untitled" %></h2>
+    <% if (c.getImagePath() != null && !c.getImagePath().isEmpty()) { %>
+      <img src="${pageContext.request.contextPath}/uploads/<%= c.getImagePath() %>" alt="Issue photo" class="c-img">
+    <% } %>
+    <p class="c-desc"><%= c.getDescription() %></p>
     <div class="c-meta">
-      <div><i data-lucide="map-pin" style="width:13px;"></i> Itahari Chowk, Ward 14</div>
-      <div><i data-lucide="clock" style="width:13px;"></i> 2 hours ago</div>
-      <div><i data-lucide="user-x" style="width:13px;"></i> Anonymous</div>
+      <div><i data-lucide="map-pin" style="width:13px;"></i> <%= c.getLocationText() != null ? c.getLocationText() : "Ward " + c.getWardNo() %></div>
+      <div><i data-lucide="user-x" style="width:13px;"></i> <%= c.getIsAnonymous() ? "Anonymous" : (c.getUserName() != null ? c.getUserName() : "Citizen") %></div>
     </div>
-    <!-- Admin Update Thread (Feature 12) -->
-    <div style="background:#F0FBFF;border:1px solid #BAE6FD;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#005B96;">
-      <strong>Admin Update:</strong> Road Maintenance Team A has been dispatched. ETA 2 hours.
-      <div style="font-size:10px;color:#86868B;margin-top:4px;">— Ujjwal Rupakheti, 30 min ago</div>
+    <% 
+        java.util.List<Integer> affectedIds = (java.util.List<Integer>) request.getAttribute("affectedIds");
+        boolean isAffected = affectedIds != null && affectedIds.contains(c.getId());
+        boolean isLogged = session.getAttribute("loggedInUser") != null;
+    %>
+    <div class="c-foot" style="border-bottom: 1px solid #E8E8ED; padding-bottom: 15px; margin-bottom: 15px; display:flex; justify-content:flex-start;">
+      <div id="affected-container-<%= c.getId() %>">
+      <% if (isAffected) { %>
+          <button type="button" class="pill" style="background:#EBF5FF;color:#005B96;border:1px solid #BAE6FD;cursor:pointer;font-family:inherit;" onclick="markAffected(<%= c.getId() %>)">
+            <i data-lucide="check-circle" style="width:13px;"></i> <span id="affected-count-<%= c.getId() %>"><%= c.getAffectedCount() %></span> I AM AFFECTED
+          </button>
+      <% } else if (isLogged) { %>
+          <button type="button" class="pill p-blue" style="cursor:pointer;border:none;font-family:inherit;" onclick="markAffected(<%= c.getId() %>)">
+            <i data-lucide="users" style="width:13px;"></i> <span id="affected-count-<%= c.getId() %>"><%= c.getAffectedCount() %></span> AFFECTED
+          </button>
+      <% } else { %>
+          <button type="button" class="pill p-blue" style="cursor:pointer;border:none;font-family:inherit;" onclick="alert('Please login to mark yourself as affected.')">
+            <i data-lucide="users" style="width:13px;"></i> <%= c.getAffectedCount() %> AFFECTED
+          </button>
+      <% } %>
+      </div>
     </div>
-    <div class="c-foot">
-      <div class="pill p-blue" onclick="this.innerHTML='<i data-lucide=\'users\' style=\'width:13px;\'></i> 43 AFFECTED'; lucide.createIcons();"><i data-lucide="users" style="width:13px;"></i> 42 AFFECTED — I'm Affected Too</div>
-      <div class="pill p-grey"><i data-lucide="message-square" style="width:13px;"></i> 8 Comments</div>
-      <a href="#" class="vlink">View Details <i data-lucide="chevron-right" style="width:14px;"></i></a>
+    
+    <!-- Comment Section -->
+    <div class="c-comments" id="comment-list-<%= c.getId() %>" style="font-size:13px; color:#1D1D1F;">
+        <% 
+            java.util.Map<Integer, java.util.List<com.civicsathy.model.Comment>> commentsMap = 
+                (java.util.Map<Integer, java.util.List<com.civicsathy.model.Comment>>) request.getAttribute("commentsMap");
+            java.util.List<com.civicsathy.model.Comment> commentsList = commentsMap != null ? commentsMap.get(c.getId()) : null;
+            int loggedUserId = loggedInUser != null ? loggedInUser.getId() : -1;
+            if (commentsList != null && !commentsList.isEmpty()) {
+                for (com.civicsathy.model.Comment comment : commentsList) {
+        %>
+            <div id="comment-<%= comment.getId() %>" style="margin-bottom:10px; background:#F5F5F7; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <span style="font-weight:700; color:#005B96; margin-right:5px;"><%= (comment.getUserName() != null ? comment.getUserName().split(" ")[0] : "Citizen") %></span>
+                    <span><%= comment.getCommentText() %></span>
+                </div>
+                <% if (comment.getUserId() == loggedUserId) { %>
+                <button type="button" onclick="deleteComment(<%= comment.getId() %>)" style="background:none;border:none;color:#D93025;cursor:pointer;font-size:11px;font-weight:600;padding:4px 8px;border-radius:4px;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='none'">Delete</button>
+                <% } %>
+            </div>
+        <%      } 
+            } else { %>
+            <div class="no-comments" style="color:#86868B; margin-bottom:10px; font-style:italic;">No comments yet.</div>
+        <%  } %>
     </div>
-  </div>
 
-  <!-- CARD 2 - RESOLVE CONFIRMATION (Feature 8) -->
-  <div class="card">
-    <div class="c-top">
-      <div class="c-cat"><div class="dot" style="background:#1A7F4B;"></div> Sanitation</div>
-      <div class="badge b-pend">Pending</div>
-    </div>
-    <h2 class="c-title">Uncollected garbage piling near Ward 5 junction</h2>
-    <p class="c-desc">Garbage has not been collected for 3 days. Strong odor is spreading to nearby houses and shops, posing a serious health risk.</p>
-    <div class="c-meta">
-      <div><i data-lucide="map-pin" style="width:13px;"></i> Ward 5</div>
-      <div><i data-lucide="clock" style="width:13px;"></i> 5 hours ago</div>
-    </div>
-    <div class="c-foot">
-      <div class="pill p-blue"><i data-lucide="users" style="width:13px;"></i> 15 AFFECTED</div>
-      <div class="pill p-grey"><i data-lucide="message-square" style="width:13px;"></i> 3 Comments</div>
-      <a href="#" class="vlink">View Details <i data-lucide="chevron-right" style="width:14px;"></i></a>
-    </div>
+    <% if (isLogged) { %>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+            <input type="text" id="comment-input-<%= c.getId() %>" placeholder="Write a comment..." required style="flex:1; border:1px solid #E8E8ED; padding:8px 12px; border-radius:20px; outline:none; font-family:inherit; font-size:13px;">
+            <button type="button" onclick="postComment(<%= c.getId() %>)" style="background:#005B96; color:white; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600; font-family:inherit;">Post</button>
+        </div>
+    <% } else { %>
+        <div style="margin-top:10px; padding:10px; background:#F9FAFB; border-radius:8px; text-align:center; color:#86868B;">
+            <a href="${pageContext.request.contextPath}/citizen/login.jsp" style="color:#005B96; text-decoration:none; font-weight:600;">Log in</a> to write a comment.
+        </div>
+    <% } %>
   </div>
-
-  <!-- CARD 3 - RESOLVED + CONFIRMATION FLOW (Feature 8) -->
-  <div class="card">
-    <div class="c-top">
-      <div class="c-cat"><div class="dot" style="background:#005B96;"></div> Water Supply</div>
-      <div class="badge b-res">Resolved</div>
+  <% 
+      }
+    } else { 
+  %>
+    <div style="padding:40px;text-align:center;color:#86868B;background:#fff;border-radius:10px;border:1px solid #E8E8ED;">
+      No issues reported yet.
     </div>
-    <h2 class="c-title">Broken water pipe flooding the street</h2>
-    <p class="c-desc">A main water pipe burst near the ring road. Municipality repair team arrived and resolved the issue within 6 hours.</p>
-    <div class="c-meta">
-      <div><i data-lucide="map-pin" style="width:13px;"></i> Ward 10</div>
-      <div><i data-lucide="clock" style="width:13px;"></i> 1 day ago</div>
-    </div>
-    <div class="c-foot">
-      <div class="pill p-blue"><i data-lucide="users" style="width:13px;"></i> 31 AFFECTED</div>
-      <div class="pill p-grey"><i data-lucide="message-square" style="width:13px;"></i> 12 Comments</div>
-      <a href="#" class="vlink">View Details <i data-lucide="chevron-right" style="width:14px;"></i></a>
-    </div>
-  </div>
+  <% } %>
 
 </div>
 
@@ -242,29 +407,30 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 <div class="right-col">
   <div class="r-panel">
     <div class="r-hd">Today's Stats</div>
-    <div class="st-row"><span>Total Reports</span><span class="st-val" style="color:#1D1D1F;">246</span></div>
-    <div class="st-row"><span>Resolved Today</span><span class="st-val" style="color:#1A7F4B;">38</span></div>
-    <div class="st-row"><span>Pending</span><span class="st-val" style="color:#B45309;">54</span></div>
-    <div class="st-row"><span>In Progress</span><span class="st-val" style="color:#005B96;">22</span></div>
+    <div class="st-row"><span>Total Reports</span><span class="st-val" style="color:#1D1D1F;">${totalCount}</span></div>
+    <div class="st-row"><span>Resolved Today</span><span class="st-val" style="color:#1A7F4B;">${resolvedTodayCount}</span></div>
+    <div class="st-row"><span>Pending</span><span class="st-val" style="color:#B45309;">${pendingCount}</span></div>
+    <div class="st-row"><span>In Progress</span><span class="st-val" style="color:#005B96;">${inProgressCount}</span></div>
   </div>
-  <!-- NOTIFICATIONS (Feature 11) -->
-  <div class="r-panel">
-    <div class="r-hd">Notifications</div>
-    <div class="n-item"><div class="n-title">Your complaint #TCK-8921 is now In Progress</div><div class="n-time">30 min ago</div></div>
-    <div class="n-item"><div class="n-title">Admin posted an update on #TCK-8920</div><div class="n-time">2 hours ago</div></div>
-    <div class="n-item"><div class="n-title">#TCK-8918 marked as Resolved — confirm?</div><div class="n-time">1 day ago</div></div>
-  </div>
-  <!-- OFFICIAL ANNOUNCEMENTS -->
+  <!-- BROADCAST MESSAGE -->
   <div class="r-panel" style="background:linear-gradient(to bottom right, #005B96, #003F6B); color:#fff; border:none;">
-    <div class="r-hd" style="color:#BAE6FD;">Official Announcements</div>
-    <div style="margin-bottom:12px;">
-      <div style="font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;"><i data-lucide="megaphone" style="width:14px;color:#BAE6FD;"></i> Road Closure Notice</div>
-      <div style="font-size:11px;opacity:0.9;line-height:1.4;">Main highway near Milan Chowk will be closed for maintenance this weekend. Please use alternate routes.</div>
+    <div class="r-hd" style="color:#BAE6FD;"><i data-lucide="radio" style="width:14px;vertical-align:bottom;margin-right:4px;"></i> Broadcast Message</div>
+    <%
+      java.util.List<com.civicsathy.model.Announcement> annList = 
+        (java.util.List<com.civicsathy.model.Announcement>) request.getAttribute("announcements");
+      if (annList != null && !annList.isEmpty()) {
+        for (int i = 0; i < annList.size(); i++) { 
+           com.civicsathy.model.Announcement ann = annList.get(i);
+           String extraStyle = (i > 0) ? "padding-top:12px;border-top:1px solid rgba(255,255,255,0.15);" : "";
+    %>
+    <div style="<%= extraStyle %>margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;"><%= ann.getTitle() %></div>
+      <div style="font-size:11px;opacity:0.9;line-height:1.4;"><%= ann.getMessage() %></div>
     </div>
-    <div style="padding-top:12px;border-top:1px solid rgba(255,255,255,0.15);">
-      <div style="font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;"><i data-lucide="droplets" style="width:14px;color:#BAE6FD;"></i> Water Supply Alert</div>
-      <div style="font-size:11px;opacity:0.9;line-height:1.4;">Scheduled water supply interruption in Ward 10 tomorrow from 10 AM to 2 PM.</div>
-    </div>
+    <%  } 
+      } else { %>
+    <div style="font-size:12px;opacity:0.8;font-style:italic;padding:10px 0;">No active broadcasts at the moment.</div>
+    <% } %>
   </div>
 </div>
 
@@ -273,13 +439,93 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 
 <!-- MOBILE BOTTOM NAV -->
 <nav class="m-bnav">
-  <a href="feed.jsp" class="mn active"><i data-lucide="layout-grid" style="width:20px;"></i>Feed</a>
-  <a href="track.jsp" class="mn"><i data-lucide="compass" style="width:20px;"></i>Track</a>
-  <div class="mfab-w"><a href="submit.jsp" class="mfab"><i data-lucide="camera" style="width:24px;"></i></a></div>
-  <a href="tel:100" class="mn red"><i data-lucide="siren" style="width:20px;"></i>Emergency</a>
-  <a href="login.jsp" class="mn"><i data-lucide="user" style="width:20px;"></i>Profile</a>
+  <a href="${pageContext.request.contextPath}/feed" class="mn active"><i data-lucide="layout-grid" style="width:20px;"></i>Feed</a>
+  <a href="${pageContext.request.contextPath}/track" class="mn"><i data-lucide="compass" style="width:20px;"></i>Track</a>
+  <div class="mfab-w"><a href="${pageContext.request.contextPath}/citizen/submit.jsp" class="mfab"><i data-lucide="camera" style="width:24px;"></i></a></div>
+  <a href="javascript:void(0)" onclick="document.getElementById('sosModalFull').style.display='flex'" class="mn red"><i data-lucide="siren" style="width:20px;"></i>Emergency</a>
+  <a href="${pageContext.request.contextPath}/profile" class="mn"><i data-lucide="user" style="width:20px;"></i>Profile</a>
 </nav>
 
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+
+function markAffected(id) {
+    var btnContainer = document.getElementById('affected-container-' + id);
+    
+    fetch('${pageContext.request.contextPath}/add-affected?ajax=true&complaintId=' + id, {
+        method: 'POST'
+    }).then(function(response) { return response.text(); }).then(function(result) {
+        var parts = result.trim().split(':');
+        var action = parts[0];
+        var count = parts[1];
+        
+        if (action === 'ADDED') {
+            btnContainer.innerHTML = '<button type="button" class="pill" style="background:#EBF5FF;color:#005B96;border:1px solid #BAE6FD;cursor:pointer;font-family:inherit;" onclick="markAffected(' + id + ')">'
+                + '<i data-lucide="check-circle" style="width:13px;"></i> <span id="affected-count-' + id + '">' + count + '</span> I AM AFFECTED'
+                + '</button>';
+        } else if (action === 'REMOVED') {
+            btnContainer.innerHTML = '<button type="button" class="pill p-blue" style="cursor:pointer;border:none;font-family:inherit;" onclick="markAffected(' + id + ')">'
+                + '<i data-lucide="users" style="width:13px;"></i> <span id="affected-count-' + id + '">' + count + '</span> AFFECTED'
+                + '</button>';
+        }
+        lucide.createIcons();
+    });
+}
+
+function postComment(id) {
+    const input = document.getElementById('comment-input-' + id);
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const formData = new URLSearchParams();
+    formData.append('ajax', 'true');
+    formData.append('complaintId', id);
+    formData.append('commentText', text);
+    
+    fetch('${pageContext.request.contextPath}/add-comment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+    }).then(response => {
+        if (response.ok) {
+            const list = document.getElementById('comment-list-' + id);
+            const noComments = list.querySelector('.no-comments');
+            if (noComments) noComments.remove();
+            
+            const div = document.createElement('div');
+            div.style.cssText = 'margin-bottom:10px; background:#F5F5F7; padding:10px; border-radius:8px; display:block;';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.style.cssText = 'font-weight:700; color:#005B96; margin-right:5px;';
+            nameSpan.innerText = 'Me';
+            
+            const textSpan = document.createElement('span');
+            textSpan.style.color = '#1D1D1F';
+            textSpan.innerText = text;
+            
+            div.appendChild(nameSpan);
+            div.appendChild(textSpan);
+            list.appendChild(div);
+            input.value = '';
+        }
+    });
+}
+
+function deleteComment(commentId) {
+    if (!confirm('Delete this comment?')) return;
+    fetch('${pageContext.request.contextPath}/add-comment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=delete&commentId=' + commentId
+    }).then(response => {
+        if (response.ok) {
+            const el = document.getElementById('comment-' + commentId);
+            if (el) el.remove();
+        } else {
+            alert('Could not delete comment.');
+        }
+    });
+}
+</script>
 </body>
 </html>
