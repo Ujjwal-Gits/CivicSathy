@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!-- Author: Prashant -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,38 +38,85 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 <body>
 <aside class="sidebar">
   <div class="sb-brand"><div class="sb-logo">Civic<span>Sathy</span></div><div class="sb-badge"><i data-lucide="shield-check" style="width:10px;height:10px;"></i> Admin Portal</div></div>
-  <nav class="sb-nav">
+    <nav class="sb-nav">
     <div class="sb-sec">Overview</div>
-    <a class="sb-item" href="dashboard.jsp"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
-    <a class="sb-item" href="complaints.jsp"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/dashboard-stats"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/complaints"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
     <div class="sb-sec">Management</div>
-    <a class="sb-item" href="ticket.jsp"><i data-lucide="inbox" style="width:18px;height:18px;"></i> Active Ticket</a>
-    <a class="sb-item danger" href="complaints.jsp"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations <span class="badge-red">5</span></a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/tasks"><i data-lucide="clipboard-list" style="width:18px;height:18px;"></i> Assigned Tasks</a>
+    <a class="sb-item danger" href="${pageContext.request.contextPath}/admin/escalations"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations <span class="badge-red"><%= new com.civicsathy.dao.ComplaintDAO().getEscalatedCount() %></span></a>
     <div class="sb-sec">Analytics & Map</div>
-    <a class="sb-item" href="map.jsp"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/map-data"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
     <div class="sb-sec">Communications</div>
     <a class="sb-item active" href="announcements.jsp"><i data-lucide="radio" style="width:18px;height:18px;"></i> Broadcast</a>
     <div class="sb-sec">System</div>
     <a class="sb-item" href="teams.jsp"><i data-lucide="users" style="width:18px;height:18px;"></i> Team Management</a>
     <a class="sb-item" href="settings.jsp"><i data-lucide="settings" style="width:18px;height:18px;"></i> Profile & Settings</a>
   </nav>
-  <div class="sb-footer"><a href="admin-login.jsp"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
+  <div class="sb-footer"><a href="${pageContext.request.contextPath}/logout"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
 </aside>
+
+<!-- MOBILE HEADER -->
+<div class="m-header">
+  <button class="m-burger" onclick="toggleMSB()"><i data-lucide="menu" style="width:20px;"></i></button>
+  <div class="m-logo">Civic<span>Sathy</span></div>
+</div>
+
+<!-- MOBILE SIDEBAR -->
+<div class="m-overlay" id="mOverlay" onclick="toggleMSB()"></div>
+<div class="m-sidebar" id="mSidebar">
+  <div class="sb-brand">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+      <div class="sb-logo">Civic<span>Sathy</span></div>
+      <button onclick="toggleMSB()" style="background:none;border:none;color:#86868B;"><i data-lucide="x" style="width:20px;"></i></button>
+    </div>
+    <div class="sb-badge"><i data-lucide="shield-check" style="width:10px;height:10px;"></i> Admin Portal</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/dashboard-stats"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/complaints"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
+    <div class="sb-sec">Management</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/tasks"><i data-lucide="clipboard-list" style="width:18px;height:18px;"></i> Assigned Tasks</a>
+    <a class="sb-item danger" href="${pageContext.request.contextPath}/admin/escalations"><i data-lucide="flag-triangle-right" style="width:18px;height:18px;"></i> Escalations</a>
+    <div class="sb-sec">Analytics & Map</div>
+    <a class="sb-item" href="${pageContext.request.contextPath}/admin/map-data"><i data-lucide="map" style="width:18px;height:18px;"></i> Ward Heatmap</a>
+    <div class="sb-sec">Communications</div>
+    <a class="sb-item active" href="announcements.jsp"><i data-lucide="radio" style="width:18px;height:18px;"></i> Broadcast</a>
+    <div class="sb-sec">System</div>
+    <a class="sb-item" href="settings.jsp"><i data-lucide="settings" style="width:18px;height:18px;"></i> Settings</a>
+  </nav>
+  <div class="sb-footer"><a href="${pageContext.request.contextPath}/logout"><button class="sb-logout"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button></a></div>
+</div>
+
 <div class="main">
   <header class="topbar"><span class="tb-title">Official Announcements</span></header>
   <div class="content">
     <div class="panel">
-      <div class="panel-hd"><i data-lucide="radio" style="width:16px;display:inline-block;vertical-align:bottom;margin-right:6px;"></i> Broadcast Message</div>
-      <p style="font-size:13px;color:#86868B;margin-bottom:24px;">This message will appear as a pinned card at the top of the Citizen Public Feed.</p>
-      <div class="field"><label>Announcement Title</label><input type="text" class="input-base" placeholder="E.g. Road Repair Ongoing at Buddha Chowk"></div>
-      <div class="field"><label>Message Content</label><textarea class="input-base" style="height:120px;resize:vertical;padding:12px;" placeholder="Write details here..."></textarea></div>
-      <div class="field"><label>Target Audience</label>
-        <select class="input-base"><option>All Citizens (Global)</option><option>Only Ward 5</option><option>Only Ward 14</option></select>
-      </div>
-      <button class="btn-primary"><i data-lucide="send" style="width:14px;height:14px;"></i> Publish Announcement</button>
+      <% if ("true".equals(request.getParameter("success"))) { %>
+        <div style="background:#D1FAE5;color:#065F46;padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px;font-weight:600;border:1px solid #6EE7B7;">
+          Announcement published successfully! It is now visible on the public feed.
+        </div>
+      <% } %>
+      <form action="${pageContext.request.contextPath}/admin/broadcast" method="post">
+        <div class="panel-hd"><i data-lucide="radio" style="width:16px;display:inline-block;vertical-align:bottom;margin-right:6px;"></i> Broadcast Message</div>
+        <p style="font-size:13px;color:#86868B;margin-bottom:24px;">This message will appear as a pinned card at the top of the Citizen Public Feed.</p>
+        <div class="field"><label>Announcement Title</label><input type="text" name="title" class="input-base" placeholder="E.g. Road Repair Ongoing at Buddha Chowk" required></div>
+        <div class="field"><label>Message Content</label><textarea name="message" class="input-base" style="height:120px;resize:vertical;padding:12px;" placeholder="Write details here..." required></textarea></div>
+        <div class="field"><label>Target Audience</label>
+          <select name="audience" class="input-base"><option>All Citizens (Global)</option><option>Only Ward 5</option><option>Only Ward 14</option></select>
+        </div>
+        <button type="submit" class="btn-primary"><i data-lucide="send" style="width:14px;height:14px;"></i> Publish Announcement</button>
+      </form>
     </div>
   </div>
 </div>
-<script>lucide.createIcons();</script>
+<script>
+  lucide.createIcons();
+  function toggleMSB() {
+    document.getElementById('mSidebar').classList.toggle('show');
+    document.getElementById('mOverlay').classList.toggle('show');
+  }
+</script>
 </body>
 </html>
