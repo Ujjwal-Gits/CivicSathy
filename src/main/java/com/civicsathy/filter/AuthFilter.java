@@ -8,49 +8,35 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+@WebFilter("/citizen/*")
 /**
- * Filter responsible for handling authentication
- * and access control for citizen-related pages.
- *
- * <p>This filter checks whether a user session exists
- * before allowing access to protected resources.
- * Public pages such as login, registration, feed,
- * and tracking pages are accessible without authentication.</p>
- *
+ * Utility class providing helper methods for AuthFilter.
+ * 
  * @author Aastha
  * @version 1.0
  */
-@WebFilter("/citizen/*")
 public class AuthFilter implements Filter {
 
     @Override
     /**
-     * Initializes the filter configuration.
+     * Executes the init operation.
      *
-     * @param filterConfig configuration object provided by the servlet container
-     * @throws ServletException if filter initialization fails
+     * @param filterConfig The filterConfig object/value.
+     * @throws ServletException if an exception occurs.
      */
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
     @Override
     /**
-     * Filters incoming requests and validates
-     * whether the user is authenticated.
+     * Executes the doFilter operation.
      *
-     * <p>If the requested page is public, the request
-     * proceeds without authentication. Otherwise,
-     * the filter checks the session for a logged-in user.</p>
-     *
-     * @param request  incoming client request
-     * @param response outgoing server response
-     * @param chain    filter chain for passing request and response
-     * @throws IOException if an input/output error occurs
-     * @throws ServletException if servlet processing fails
+     * @param request The request object/value.
+     * @param response The response object/value.
+     * @param chain The chain object/value.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
@@ -61,27 +47,24 @@ public class AuthFilter implements Filter {
                 path.endsWith("feed.jsp") || path.endsWith("track.jsp") ||
                 path.endsWith("/login") ||
                 path.endsWith("/register")) {
-
             chain.doFilter(request, response);
             return;
         }
 
         HttpSession session = req.getSession(false);
-
-        boolean loggedIn =
-                session != null && session.getAttribute("loggedInUser") != null;
+        boolean loggedIn = session != null && session.getAttribute("loggedInUser") != null;
 
         if (loggedIn) {
             chain.doFilter(request, response);
         } else {
-            res.sendRedirect(req.getContextPath()
-                    + "/citizen/login.jsp?error=Please login to access this page");
+            res.sendRedirect(req.getContextPath() + "/citizen/login.jsp?error=Please login to access this page");
         }
     }
 
     @Override
     /**
-     * Cleans up filter resources before destruction.
+     * Executes the destroy operation.
+     *
      */
     public void destroy() {
     }

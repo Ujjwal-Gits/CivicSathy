@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!-- Author: Prashant -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,12 +32,33 @@ a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:inherit;
 .input-base{width:100%;height:44px;border:1px solid #E8E8ED;border-radius:6px;padding:0 14px;font-size:14px;font-family:inherit;color:#0A0A0A;outline:none;background:#fff;}
 .input-base:focus{border-color:#005B96;box-shadow:0 0 0 3px #EBF5FF;}
 .btn-primary{background:#0A0A0A;color:#fff;border:none;height:44px;padding:0 24px;border-radius:6px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;}
+
+/* MOBILE OVERRIDES */
+.m-header{display:none;}.m-sidebar{display:none;}
+@media(max-width:768px){
+  body{display:block !important; overflow:visible;}
+  .m-header{width:100%; box-sizing:border-box;}
+  .sidebar{display:none !important;}
+  .topbar{display:none !important;}
+  .main{height:auto;min-height:100vh;overflow:visible;}
+  .content{padding:16px;padding-bottom:60px;}
+  .panel{padding:20px;max-width:none;}
+  
+  .m-header{display:flex;align-items:center;gap:12px;height:60px;background:#fff;border-bottom:1px solid #E8E8ED;padding:0 16px;position:sticky;top:0;z-index:2001;}
+  .m-burger{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#F5F5F7;border-radius:8px;color:#1D1D1F;}
+  .m-logo{font-size:17px;font-weight:700;letter-spacing:-.3px;}.m-logo span{color:#005B96;}
+  
+  .m-sidebar{display:flex;flex-direction:column;position:fixed;top:0;left:-280px;width:280px;height:100vh;background:#fff;z-index:2000;transition:.3s cubic-bezier(0.4, 0, 0.2, 1);visibility:hidden;}
+  .m-sidebar.show{left:0;visibility:visible;box-shadow:20px 0 50px rgba(0,0,0,0.15);}
+  .m-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);z-index:1999;}
+  .m-overlay.show{display:block;}
+}
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="sb-brand"><div class="sb-logo">Civic<span>Sathy</span></div><div class="sb-badge"><i data-lucide="shield-check" style="width:10px;height:10px;"></i> Admin Portal</div></div>
-    <nav class="sb-nav">
+  <nav class="sb-nav">
     <div class="sb-sec">Overview</div>
     <a class="sb-item" href="${pageContext.request.contextPath}/admin/dashboard-stats"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
     <a class="sb-item" href="${pageContext.request.contextPath}/admin/complaints"><i data-lucide="list-checks" style="width:18px;height:18px;"></i> All Tickets</a>
