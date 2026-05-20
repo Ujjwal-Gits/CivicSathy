@@ -57,8 +57,7 @@
                                   } catch(Exception e){}
                                   }
                                   if (complaint == null) {
-                                  response.sendRedirect("complaints.jsp?error=Ticket
-                                  not found");
+                                  response.sendRedirect("complaints.jsp?error=Ticket not found");
                                   return;
                                   }
                                   %>
